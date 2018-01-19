@@ -17,10 +17,10 @@
         private readonly Task<string> uploadTask;
         private readonly Stream stream;
 
-        public FirebaseStorageTask(FirebaseStorageOptions options, string url, string downloadUrl, Stream stream, CancellationToken cancellationToken)
+        public FirebaseStorageTask(FirebaseStorageOptions options, string url, string downloadUrl, Stream stream, CancellationToken cancellationToken, TimeSpan timeOutRequest)
         {
             this.TargetUrl = url;
-            this.uploadTask = this.UploadFile(options, url, downloadUrl, stream, cancellationToken);
+            this.uploadTask = this.UploadFile(options, url, downloadUrl, stream, cancellationToken, timeOutRequest);
             this.stream = stream;
             this.Progress = new Progress<FirebaseStorageProgress>();
 
@@ -45,7 +45,7 @@
             return this.uploadTask.GetAwaiter();
         }
 
-        private async Task<string> UploadFile(FirebaseStorageOptions options, string url, string downloadUrl, Stream stream, CancellationToken cancellationToken)
+        private async Task<string> UploadFile(FirebaseStorageOptions options, string url, string downloadUrl, Stream stream, CancellationToken cancellationToken, TimeSpan timeOutRequest)
         {
             var responseData = "N/A";
 
@@ -53,6 +53,7 @@
             {
                 using (var client = await options.CreateHttpClientAsync())
                 {
+                    client.Timeout = timeOutRequest;
                     var request = new HttpRequestMessage(HttpMethod.Post, url)
                     {
                         Content = new StreamContent(stream)

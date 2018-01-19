@@ -28,10 +28,11 @@
         /// </summary>
         /// <param name="stream"> Stream to upload. </param>
         /// <param name="cancellationToken"> Cancellation token which can be used to cancel the operation. </param>
+        /// <param name="timeOutRequest"> TimeOut for request time. </param>
         /// <returns> <see cref="FirebaseStorageTask"/> which can be used to track the progress of the upload. </returns>
-        public FirebaseStorageTask PutAsync(Stream stream, CancellationToken cancellationToken)
+        public FirebaseStorageTask PutAsync(Stream stream, CancellationToken cancellationToken, TimeSpan timeOutRequest)
         {
-            return new FirebaseStorageTask(this.storage.Options, this.GetTargetUrl(), this.GetFullDownloadUrl(), stream, cancellationToken);
+            return new FirebaseStorageTask(this.storage.Options, this.GetTargetUrl(), this.GetFullDownloadUrl(), stream, cancellationToken, timeOutRequest);
         }
 
         /// <summary>
@@ -41,7 +42,18 @@
         /// <returns> <see cref="FirebaseStorageTask"/> which can be used to track the progress of the upload. </returns>
         public FirebaseStorageTask PutAsync(Stream fileStream)
         {
-            return this.PutAsync(fileStream, CancellationToken.None);
+            return this.PutAsync(fileStream, CancellationToken.None, new TimeSpan(0, 0, 100));
+        }
+
+        /// <summary>
+        /// Starts uploading given stream to target location.
+        /// </summary>
+        /// <param name="stream"> Stream to upload. </param>
+        /// <param name="timeOutRequest"> TimeOut for request time. </param>
+        /// <returns> <see cref="FirebaseStorageTask"/> which can be used to track the progress of the upload. </returns>
+        public FirebaseStorageTask PutAsync(Stream fileStream, TimeSpan timeOutRequest)
+        {
+            return this.PutAsync(fileStream, CancellationToken.None, timeOutRequest);
         }
 
         /// <summary>
